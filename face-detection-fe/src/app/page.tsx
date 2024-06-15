@@ -23,7 +23,7 @@ export default function Home() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await axios.post("http://localhost:8000/face-detection", formData, {
+      const response = await axios.post("http://localhost/api/v1/face-detection", formData, {
         responseType: 'blob',
         headers: {
           'Content-Type': 'multipart/form-data'

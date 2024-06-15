@@ -1,0 +1,24 @@
+version: "3"
+services:
+  backend:
+    build: .
+    container_name: fastapi-be
+    ports:
+      - "8000:8000"
+    depends_on:
+      - frontend
+
+  frontend:
+    build: ./face-detection-fe
+    container_name: face-detection-fe
+    ports:
+      - "3000:3000"
+
+  proxy:
+    build: ./nginx
+    container_name: proxy-container
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend

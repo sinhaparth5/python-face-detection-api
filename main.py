@@ -18,7 +18,7 @@ app.add_middleware(
 
 face_cascade = cv2.CascadeClassifier('frontalface.xml')
 
-@app.post("/face-detection")
+@app.post("/api/v1/face-detection")
 async def detect_face(file: UploadFile = File(...)):
     content = await file.read()
     nparr = np.frombuffer(content, np.uint8)
