@@ -65,7 +65,7 @@ export default function Home() {
             upload image below 1mb</Badge>
         </div>
         <div className="justify-center">
-          <Button onClick={handleUpload} disabled={!selectedFile || loading} variant="outline">
+          <Button onClick={handleUpload} disabled={!selectedFile || loading} variant="outline" className="mt-2">
             {loading ? 'Processing...' : 'Upload'}
           </Button>
         </div>
