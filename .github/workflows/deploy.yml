@@ -29,3 +29,9 @@ jobs:
           cd nginx
           docker build -t ${{ secrets.DOCKER_USERNAME }}/face-detection-proxy:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/face-detection-proxy:latest
+
+      - name: Build & Push Frontend Image
+        run: |
+          cd face-detection-fe
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/face-detection-fe:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/face-detection-fe:latest
