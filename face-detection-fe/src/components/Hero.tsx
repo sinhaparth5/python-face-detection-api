@@ -5,6 +5,7 @@ import { BorderBeam } from "@/components/magicui/border-beam";
 import { motion, useInView } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useRef } from "react";
+import Image from "next/image";
 
 export function Hero() {
     const fadeInRef = useRef(null);
@@ -116,13 +117,17 @@ export function Hero() {
                             )}
                         />
 
-                        <img
-                            src="/images/banner.png"
+                        <Image
+                            src="/img/banner.jpg"
                             className="relative block h-full w-full rounded-xl border dark:hidden"
+                            alt="Hero Banner"
+                            width={1350} height={730}
                         />
-                        <img
-                            src="/images/banner.png"
+                        <Image
+                            src="/img/banner.jpg"
                             className="relative hidden h-full w-full rounded-xl border dark:block"
+                            alt="Hero Banner"
+                            width={1350} height={730}
                         />
                         {/* <video
               autoPlay
