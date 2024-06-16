@@ -14,7 +14,7 @@ data:
 
         server {
             listen 80;
-            server_name face.pksinha.co.uk;
+            server_name ai.pksinha.co.uk;
 
             location / {
                 proxy_pass http://frontend;
