@@ -1,19 +1,46 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
 import cv2
 import numpy as np
 from io import BytesIO
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.templates import TemplateResponse
+from starlette.requests import Request
+
+# Configure allowed origins (adjust as needed)
+allowed_origins = ["https://pksinha.co.uk"]
+
+# Custom XSS protection middleware
+async def xss_protection_middleware(request: Request, call_next):
+    # Access request data (e.g., query params, body) for sanitization
+    data = request.query_params if request.method == "GET" else await request.body()
+    # Sanitize data using bleach (consider customizing allowed tags/attributes)
+    cleaned_data = clean(data, tags=[], attributes={}, strip=True)
+
+    # Update request object with sanitized data
+    async def wrapped_call_next():
+        request.scope["cleaned_data"] = cleaned_data
+        response = await call_next()
+        return response
+    response = await wrapped_call_next()
+
+    # Escape data in templates before rendering (if using templates)
+    if isinstance(response, TemplateResponse):
+        response.context_data["cleaned_data"] = cleaned_data  # Pass sanitized data to template
+    return response
 
 app = FastAPI()
 
-# Allow CORS for all origins
+# Add XSS protection middleware
+app.add_middleware(xss_protection_middleware)
+
+# Add CORS middleware with some restrictions (adjust as needed)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=False,  # Disable credentials for now
+    allow_methods=["*"],  # Consider restricting methods if necessary
+    allow_headers=["*"],  # Consider restricting headers if necessary
 )
 
 face_cascade = cv2.CascadeClassifier('frontalface.xml')
