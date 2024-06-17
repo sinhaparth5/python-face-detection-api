@@ -1,38 +1,18 @@
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, File, UploadFile, Request, Body
+from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.encoders import jsonable_encoder
+from html import escape
 import cv2
 import numpy as np
 from io import BytesIO
 from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware.templates import TemplateResponse
 from starlette.requests import Request
+import json
 
 # Configure allowed origins (adjust as needed)
-allowed_origins = ["https://pksinha.co.uk"]
-
-# Custom XSS protection middleware
-async def xss_protection_middleware(request: Request, call_next):
-    # Access request data (e.g., query params, body) for sanitization
-    data = request.query_params if request.method == "GET" else await request.body()
-    # Sanitize data using bleach (consider customizing allowed tags/attributes)
-    cleaned_data = clean(data, tags=[], attributes={}, strip=True)
-
-    # Update request object with sanitized data
-    async def wrapped_call_next():
-        request.scope["cleaned_data"] = cleaned_data
-        response = await call_next()
-        return response
-    response = await wrapped_call_next()
-
-    # Escape data in templates before rendering (if using templates)
-    if isinstance(response, TemplateResponse):
-        response.context_data["cleaned_data"] = cleaned_data  # Pass sanitized data to template
-    return response
+allowed_origins = ["api.pksinha.co.uk"]
 
 app = FastAPI()
-
-# Add XSS protection middleware
-app.add_middleware(xss_protection_middleware)
 
 # Add CORS middleware with some restrictions (adjust as needed)
 app.add_middleware(
@@ -55,7 +35,7 @@ async def detect_face(file: UploadFile = File(...)):
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
-    _, img_decode = cv2.imencode('.png', img)
-    img_bytes = BytesIO(img_decode.tobytes())
+    _, img_encode = cv2.imencode('.png', img)
+    img_bytes = BytesIO(img_encode.tobytes())
 
     return StreamingResponse(img_bytes, media_type="image/png")
