@@ -34,7 +34,7 @@ export default function Home() {
         formData.append('file', selectedFile);
 
         try {
-            const response = await axios.post("https://ai.pksinha.co.uk/api/v1/face-detection", formData, {
+            const response = await axios.post("https://api.pksinha.co.uk/api/v1/face-detection", formData, {
                 responseType: 'blob',
                 headers: {
                     'Content-Type': 'multipart/form-data'
