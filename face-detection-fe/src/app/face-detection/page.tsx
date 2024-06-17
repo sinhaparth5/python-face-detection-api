@@ -75,7 +75,7 @@ export default function Home() {
                 {detectedImage && (
                     <div style={{marginTop: '20px'}}>
                         <h2>Detected Faces</h2>
-                        <Image src={detectedImage} alt="Detected faces" style={{ maxWidth: '100%' }} />
+                        <img src={detectedImage} alt="Detected faces" style={{ maxWidth: '100%' }} />
                     </div>
                 )}
             </div>
