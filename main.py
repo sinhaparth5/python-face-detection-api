@@ -10,7 +10,10 @@ from starlette.requests import Request
 import json
 
 # Configure allowed origins (adjust as needed)
-allowed_origins = ["https://ai.pksinha.co.uk/face-detection"]
+allowed_origins = [
+    "https://ai.pksinha.co.uk/face-detection",
+    "https://ai.pksinha.co.uk"
+]
 
 app = FastAPI()
 
