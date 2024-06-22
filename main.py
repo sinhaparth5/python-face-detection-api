@@ -6,6 +6,8 @@ import cv2
 import numpy as np
 from io import BytesIO
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import Response
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 import json
 
@@ -16,14 +18,34 @@ allowed_origins = [
 ]
 
 app = FastAPI()
+# Add CORS middleware with some restrictions
+class SecurityHeaderMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1: mode=block'
+        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        response.headers['Referrer-Policy'] = 'no-referrer'
+        response.headers['Permissions-Policy'] = (
+            "accelerometer=(), autoplay=(), camera=(), "
+            "fullscreen=(), geolocation=(), gyroscope=(), "
+            "magnetometer=(), microphone=(), midi=(), "
+            "payment=(), sync-xhr=(), usb=(), vr=()"
+        )
+        response.headers['Expect-CT'] = 'max-age=86400, enforce'
+        response.headers['X-Permitted-Cross-Domain-Policies'] = 'none'
+        return response
 
-# Add CORS middleware with some restrictions (adjust as needed)
+app.add_middleware(SecurityHeaderMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=False,  # Disable credentials for now
-    allow_methods=["*"],  # Consider restricting methods if necessary
-    allow_headers=["*"],  # Consider restricting headers if necessary
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 face_cascade = cv2.CascadeClassifier('frontalface.xml')
